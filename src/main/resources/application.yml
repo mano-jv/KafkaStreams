@@ -1,0 +1,40 @@
+server:
+  port: 80
+  shutdown: graceful
+
+spring.cloud.stream:
+  bindings:
+    streamFunctionProcessor-in-0:
+      destination: com.example.designer
+    streamFunctionProcessor-out-0:
+      destination: com.example.designerconsumer
+
+spring:
+  kafka:
+    bootstrap-servers: pkc-921jm.us-east-2.aws.confluent.cloud:9092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: latest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringDeserializer
+    properties:
+      security.protocol: SASL_SSL
+      basic.auth.credentials.source: USER_INFO
+      basic.auth.user.info: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      schema.registry.url: https://psrc-e8157.us-east-2.aws.confluent.cloud
+      sasl:
+        mechanism: PLAIN
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="XXXXXXXXXXX" password="XXXXXXXXXXXXXXXXXXXXX";
+    streams:
+      application-id: core-kafka-stream-designer
+      bootstrap-servers: ${spring.kafka.bootstrap-servers}
+
+  # Best practice for higher availability in Apache Kafka clients prior to 3.0
+  #spring.kafka.properties.session.timeout.ms=45000
+
+  # Required connection configs for Confluent Cloud Schema Registry
+  #spring.kafka.properties.basic.auth.credentials.source=USER_INFO
+  #spring.kafka.properties.basic.auth.user.info={{ SR_API_KEY }}:{{ SR_API_SECRET }}
+  #spring.kafka.properties.schema.registry.url=https://psrc-e8157.us-east-2.aws.confluent.cloud
